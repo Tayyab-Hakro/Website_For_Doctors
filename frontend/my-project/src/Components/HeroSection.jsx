@@ -1,6 +1,6 @@
 function HeroSection() {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="w-full h-screen flex items-center justify-center bg-blue-200  p-6">
         <div className="grid lg:grid-cols-2 sm:grid-cols-1 w-full max-w-6xl gap-8">
           {/* Left Content Section */}
           <div className="flex flex-col justify-center items-start text-left px-6">
@@ -13,17 +13,18 @@ function HeroSection() {
             </p>
             <div className="mt-6 flex space-x-4">
               <button className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition">
-                InShAllah, Allah will make me
+        Start Now
               </button>
               <button className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition">
-                InShAllah, Allah will make me
+        Contact Now
+              
               </button>
             </div>
           </div>
   
           {/* Right Image Section */}
           <div className="flex justify-center items-center">
-            <img className="w-[300px] h-[300px] rounded-lg shadow-lg object-cover bg-red-300" src="../Images/download.png" alt="Hero Image" />
+            <img src="../../Mask group.png" className="w-[300px] h-[300px] rounded-lg shadow-lg object-cover "  alt="Hero Image" />
           </div>
         </div>
       </div>
