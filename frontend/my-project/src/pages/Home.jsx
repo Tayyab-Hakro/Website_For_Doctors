@@ -1,5 +1,6 @@
 import AboutUs from "../Components/AboutUs"
 import HeroSection from "../Components/HeroSection"
+import Newsletter from "../Components/Newsletter"
 import Specaility from "../Components/Specaility"
 
 function Home() {
@@ -8,6 +9,7 @@ function Home() {
         <HeroSection/>
         <AboutUs/>
         <Specaility/>
+        <Newsletter/>
     </div>
   )
 }
