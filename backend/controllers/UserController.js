@@ -1,31 +1,52 @@
 import Usersmodel from "../models/UserModel.js";
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+// Function to generate JWT token
+const generateToken = (user) => {
+    console.log("Generating JWT Token...");
+    console.log("JWT_SECRET:", process.env.JWT_SECRET); // Debugging JWT_SECRET
+
+    return jwt.sign(
+        { id: user._id, email: user.email, username: user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+    );
+};
 
 // Signup Route
 export const SignUp = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-
         if (!username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Check if user already exists
         const existingUser = await Usersmodel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Save user to the database
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new Usersmodel({ username, email, password: hashedPassword });
         await newUser.save();
 
-        res.status(201).json({ message: "User signed up successfully" });
+        const token = generateToken(newUser);
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 3600000
+        });
+
+        console.log("User signed up, Token Set:", token);
+
+        res.status(201).json({
+            message: "User signed up successfully",
+            token,
+            user: { id: newUser._id, email: newUser.email, username: newUser.username }
+        });
     } catch (error) {
         console.error("Error in SignUp:", error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -36,58 +57,58 @@ export const SignUp = async (req, res) => {
 export const Login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
         if (!email || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
         const user = await Usersmodel.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        // Generate JWT token
-        const token = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
+        const token = generateToken(user);
 
-        res.status(200).json({ 
-            token, 
-            user: { id: user._id, email: user.email, username: user.username }, 
-            message: "Login successful" 
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 3600000
         });
-    } catch (err) {
-        console.error("Error in Login:", err);
+
+        console.log("Login successful, Token Set:", token);
+
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            user: { id: user._id, email: user.email, username: user.username }
+        });
+    } catch (error) {
+        console.error("Error in Login:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-// Middleware to Verify Token
+// Middleware to Verify Token from Cookies
 export const verifyToken = (req, res, next) => {
     try {
-        const authHeader = req.headers["authorization"];
-
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        const token = req.cookies.token; // Fixing incorrect token extraction
+        if (!token) {
+            console.log("No token found in cookies");
             return res.status(403).json({ message: "No token provided" });
         }
 
-        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded);
 
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) return res.status(401).json({ message: "Unauthorized" });
-
-            req.user = decoded;
-            next();
-        });
+        req.user = decoded.id;
+        next();
     } catch (error) {
         console.error("Error in verifyToken:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(401).json({ message: "Invalid or expired token" });
     }
 };
