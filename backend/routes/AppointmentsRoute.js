@@ -1,9 +1,8 @@
 import express from 'express'
 import { UserAppointments } from '../controllers/UserAppointements.js';
-import {verifyToken} from '../controllers/UserController.js'
-
+import isAuthenticated from '../auths/auth.js';
 const AppointmentRouter  = express.Router();
-AppointmentRouter.post("/create" ,verifyToken,UserAppointments)
+AppointmentRouter.post("/create" ,isAuthenticated,UserAppointments)
 
 
 export default AppointmentRouter
