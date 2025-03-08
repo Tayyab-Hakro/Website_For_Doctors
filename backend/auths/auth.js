@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config({
     path: "../.env"
 });
-
 const isAuthenticated = async (req, res, next) => {
     try {
         const token = req.cookies.token;
