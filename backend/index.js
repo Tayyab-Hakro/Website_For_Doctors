@@ -14,12 +14,12 @@ dotenv.config({
 
 // Middlewares
 app.use(express.json());
-app.use(
-    cors({
-        origin: "http://localhost:3000", // Adjust based on your frontend URL
-        credentials: true,
-    })
-);
+
+const corsOptions = {
+    origin:"http://localhost:5173",
+    credentials:true
+}
+app.use(cors(corsOptions));
 
 // Connect to Database
 app.use(cookieParser());
