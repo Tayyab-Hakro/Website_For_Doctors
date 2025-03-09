@@ -11,7 +11,7 @@ function Register() {
   const navigate = useNavigate();
 
   const handleForm = async (e) => {
-    e.preventDefault(); // Fixed typo
+    e.preventDefault();
 
     try {
       if (isLoggedIn) {
@@ -23,14 +23,26 @@ function Register() {
             headers: {
               "Content-Type": "application/json",
             },
-            withCredentials: true,
+            withCredentials: true, // ✅ Enables cookie handling if needed
           }
         );
+
+        console.log(response.data); // ✅ Debug: see the full response
+
+        const token = response.data.token; // ✅ Now present in backend response
+
+        if (token) {
+          localStorage.setItem("token", token); // ✅ Save token to localStorage
+          window.dispatchEvent(new Event("storage"));
+          console.log("Login successful, token:", token);
+        } else {
+          console.warn("Token missing in response");
+        }
 
         if (response.data.success) {
           navigate("/");
         } else {
-          console.log("Login failed");
+          console.log("Login failed:", response.data.message);
         }
       } else {
         // Signup API Call
@@ -45,18 +57,20 @@ function Register() {
           }
         );
 
+        console.log(response.data);
+
         if (response.data.success) {
           navigate("/");
         } else {
-          console.log("Signup failed");
+          console.log("Signup failed:", response.data.message);
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error("Request error:", error);
     }
   };
 
-  const handleSignUp = () => {
+  const toggleForm = () => {
     setIsLoggedIn(!isLoggedIn);
   };
 
@@ -75,6 +89,7 @@ function Register() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              required
             />
           )}
 
@@ -84,6 +99,7 @@ function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            required
           />
 
           <input
@@ -92,6 +108,7 @@ function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            required
           />
 
           <button
@@ -103,10 +120,13 @@ function Register() {
         </form>
 
         <p className="text-center text-gray-600 mt-4">
-          {isLoggedIn ? "Don't have an account?" : "Already have an account?"}
+          {isLoggedIn
+            ? "Don't have an account?"
+            : "Already have an account?"}
           <button
+            type="button"
             className="text-yellow-500 hover:underline ml-1"
-            onClick={handleSignUp}
+            onClick={toggleForm}
           >
             {isLoggedIn ? "Sign Up" : "Login"}
           </button>
