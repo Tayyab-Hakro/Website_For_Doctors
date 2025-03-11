@@ -1,14 +1,16 @@
 
 function AboutUs() {
   return (
-    <div className="w-full h-full flex  flex-wrap grid-cols-1 md:grid-cols-2">
+    <div className="w-full h-full  flex sm:flex-wrap  grid   sm:grid-col-1 md:grid-cols-2">
         
-        <div className="flex m-10">
+        <div className=" flex m-10 ">
 
-        <div className="w-[50%] h-auto">
-            <img src="../../image 1.png" alt="Image " />
+        <div className="  md:w-[60%] flex justify-center items-center h-full">
+            <img className='w-full h-full' src="../../image 1.png" alt="Image " />
         </div>
-        <div className="w-[50%] h-auto">
+        </div>
+
+        <div className=" md:w-[50%] h-auto  justify-center items-center text-center">
             <h1 className="font-sans mt-4 text-3xl font-bold p-3" >About Us</h1>
     <h1 className="font-serif text-black text-5xl p-3">World-Class Preventive,
     Prescriptive & Curative
@@ -19,7 +21,6 @@ to ensure Safety of our patients, effectiveness of our treatments,
 transparency in our practices, and absolute timely care.
 </p>
 <button className="bg-blue-800 text-white ml-3 px-4 py-2">Contact Us</button>
-        </div>
         </div>
 
         </div>
