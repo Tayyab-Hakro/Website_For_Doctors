@@ -12,7 +12,6 @@ dotenv.config({
     path:".env"
 })
 
-// Middlewares
 app.use(express.json());
 
 const corsOptions = {
@@ -21,14 +20,11 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-// Connect to Database
 app.use(cookieParser());
 
-// Routes
 app.use("/api/user", UserRouter);
 app.use("/api/user/ap", AppointmentRouter);
 
-// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, function () {
     console.log(`Server is running on port ${PORT}`);

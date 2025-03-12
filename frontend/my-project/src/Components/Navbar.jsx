@@ -38,6 +38,8 @@ function Navbar() {
           <li><Link to="/contact">Contact</Link></li>
           <li><Link to="/about">About</Link></li>
           <li><Link to="/appointments">Book Appointments</Link></li>
+          <li><Link to="/myappoitnments">My Appointments</Link></li>
+
         </ul>
       </div>
 

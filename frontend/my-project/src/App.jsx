@@ -6,6 +6,7 @@ import Appointments from "./pages/Appointments"
 import BookAppointments from "./pages/BookAppointments"
 import { useEffect } from "react"
 import Isauth from "./Components/Isauth"
+import MyAppointments from "./pages/MyAppointments"
 function App() {
   useEffect (() => {
     const tokem = localStorage.getItem("token")
@@ -21,9 +22,7 @@ function App() {
     <Route path="/register" element={ <Register/>} />
     <Route path="/appointments" element={<Appointments/>} />
     <Route path="/BookngAppointments"  element={<Isauth> <BookAppointments/> </Isauth>} />
-
-
-
+    <Route path="/myappoitnments"  element={<Isauth> <MyAppointments/> </Isauth>} />
   </Routes>
   </BrowserRouter>
 </div>
