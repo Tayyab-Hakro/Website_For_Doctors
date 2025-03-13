@@ -1,29 +1,36 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function MyAppointments() {
   const [data, setData] = useState([]);
-
-  const handleAppointments = async (req ) => {
-    try {
-      const userId = req.params.userId
-      const response = await axios.get(
-        `http://localhost:3000/api/user/ap/mydata/${userId}`
-      );
-      if (response.data.success) {
-        console.log(response.data);
-        setData(response.data.data);
-      } else {
-        console.log("Error is coming get data");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { id } = useParams(); // Access dynamic parameter from the URL
 
   useEffect(() => {
+    const handleAppointments = async () => {
+      if (!id) {
+        console.error("No user ID provided in the URL!");
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/user/ap/mydata/${id}`
+        );
+
+        if (response.data.success) {
+          console.log(response.data);
+          setData(response.data.data);
+        } else {
+          console.log("No data found for this user.");
+        }
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    };
+
     handleAppointments();
-  }, []);
+  }, [id]); // include id as dependency
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
